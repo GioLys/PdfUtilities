@@ -4,6 +4,8 @@ import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QFileDialog
 import shutil
 from shutil import copyfile
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import Qt
 
 # FUNÇÕES DO BOTÃO MERGE
 def pdf_merge():
@@ -27,7 +29,7 @@ def pdf_merge():
 
     salvar_arquivo()
 
-    mostrar_alerta()
+    mostrar_alerta_merge()
 
     print("Merge concluído")
 
@@ -54,11 +56,10 @@ def pdf_merge():
     except:
         print(f"Ocorreu um erro ao excluir o arquivo PDF.")
     
+def mostrar_alerta_merge():
 
-def mostrar_alerta():
-
-    alerta.setText("Merge Concluído")
-    alerta.adjustSize()
+    alerta_merge.setText("Merge Concluído")
+    alerta_merge.adjustSize()
 
 def salvar_arquivo():
      
@@ -89,6 +90,22 @@ def carregar_arquivo():
         copyfile(caminho_arquivo, destination_path)
         print(f'Arquivo "{nome_arquivo}" salvo em "arquivos".')
 
+    pixmap = QPixmap('icon_pdf.png')  # Substitua 'imagem.png' pelo caminho da sua imagem
+    lbl_image.setPixmap(pixmap)
+    lbl_image.setScaledContents(True)  # Redimensionar a imagem para o tamanho do QLabel
+
+    mostrar_lbl_alerta_carregado()
+
+def mostrar_lbl_alerta_carregado():
+    #puxa a lista de arquivos ordenada
+    lista_arquivos = os.listdir("arquivos")
+    lista_arquivos.sort()
+    texto = ' | '.join(lista_arquivos)
+
+    #mostra a lista de arquivos que o usuario carregou pra ele mesmo verificar
+    lbl_alerta_carregado.setText("Arquivos: {}".format(texto))
+    lbl_alerta_carregado.adjustSize()
+    print(lista_arquivos)
 
 # --------------------------------------- Estrutura do executável --------------------------------------------------
 app = QApplication(sys.argv)
@@ -99,22 +116,32 @@ janela.resize(300, 300)
 
 #set do título
 titulo = QLabel(janela)
-titulo.move(120, 80)
+titulo.move(120, 50)
 titulo.setText("PDF Merge")
 
 #set do botão de carregar arquivo
 carregar_arquivoButton = QPushButton("Carregar Arquivo", janela)
-carregar_arquivoButton.setGeometry(20, 190, 120, 50)
+carregar_arquivoButton.setGeometry(20, 210, 120, 50)
 carregar_arquivoButton.clicked.connect(carregar_arquivo)
 
+#set da imagem pdf
+lbl_image = QLabel(janela)
+lbl_image.setGeometry(120,110,50,50)
+
+
+#set do alerta_merge de arquivos carregados
+lbl_alerta_carregado = QLabel(janela)
+lbl_alerta_carregado.move(75, 170)
+lbl_alerta_carregado.setStyleSheet("margin-right: 100px")
+
 #set do botão de merge arquivo
-merge_arquivoButton = QPushButton("Merge PDF", janela)
-merge_arquivoButton.setGeometry(160, 190, 120, 50)
+merge_arquivoButton = QPushButton("Juntar PDF", janela)
+merge_arquivoButton.setGeometry(160, 210, 120, 50)
 merge_arquivoButton.clicked.connect(pdf_merge)
 
-#set do alerta de merge concluído
-alerta = QLabel(janela)
-alerta.move(105, 260)
+#set do alerta_merge de merge concluído
+alerta_merge = QLabel(janela)
+alerta_merge.move(105, 270)
 
 janela.show()
 app.exec()
