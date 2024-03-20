@@ -8,19 +8,17 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QFileDialog
 
-#Constantes
-LISTA_ARQUIVOS = os.listdir("./arquivos")
-
 #FUNÇÕES DO BOTÃO MERGE
 def pdf_merge():
 
     # merge dos arquivos na pasta "./arquivos"
     merger = PyPDF2.PdfMerger()
-    LISTA_ARQUIVOS.sort()
-    print(LISTA_ARQUIVOS)
+    arquivos = os.listdir("./arquivos")
+    arquivos.sort()
+    print(arquivos)
 
    #abre os arquivos dentro da pasta arquivo read only para fazer um apend
-    for arquivo in LISTA_ARQUIVOS:
+    for arquivo in arquivos:
         if arquivo.endswith(".pdf"):
             with open(os.path.join("./arquivos", arquivo), "rb") as arquivo_pdf:
                 merger.append(arquivo_pdf)
@@ -77,6 +75,12 @@ def salvar_arquivo():
 
 #FUNÇÕES DO BOTÃO CARREGAR ARQUIVO
 def carregar_arquivo():
+
+    # Verifica se a pasta "arquivos" existe e a cria se não existir
+    diretorio_arquivos = "arquivos"
+    if not os.path.exists(diretorio_arquivos):
+        os.makedirs(diretorio_arquivos)
+
     arquivo_carregado, _ = QFileDialog.getOpenFileNames(None, 'Selecionar Arquivos PDF', '', 'Arquivos PDF (*.pdf);;Todos os Arquivos (*)')
 
     if not arquivo_carregado:
